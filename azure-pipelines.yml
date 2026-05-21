@@ -9,6 +9,7 @@ pool:
 variables:
   imageName: 'devopstask-flask'
   imageTag: '$(Build.BuildId)'
+  acrLoginServer: 'devopstaskacr001.azurecr.io'
 
 steps:
   - checkout: self
@@ -32,5 +33,16 @@ steps:
   - script: |
       echo "Building Docker image..."
       docker build -t $(imageName):$(imageTag) .
+      docker tag $(imageName):$(imageTag) $(acrLoginServer)/$(imageName):$(imageTag)
       docker images | grep $(imageName)
-    displayName: "Build Docker image"
+    displayName: "Build and tag Docker image"
+
+  - script: |
+      echo "Logging in to Azure Container Registry..."
+      echo "$(ACR_PASSWORD)" | docker login $(acrLoginServer) -u "$(ACR_USERNAME)" --password-stdin
+    displayName: "Login to ACR"
+
+  - script: |
+      echo "Pushing Docker image to ACR..."
+      docker push $(acrLoginServer)/$(imageName):$(imageTag)
+    displayName: "Push Docker image to ACR"
