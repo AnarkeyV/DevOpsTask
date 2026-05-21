@@ -12,9 +12,11 @@ spec:
       labels:
         app: devopstask-flask
     spec:
+      imagePullSecrets:
+        - name: acr-secret
       containers:
         - name: devopstask-flask
-          image: devopstask-flask:v1
-          imagePullPolicy: IfNotPresent
+          image: devopstaskacr001.azurecr.io/devopstask-flask:v1
+          imagePullPolicy: Always
           ports:
             - containerPort: 5002
