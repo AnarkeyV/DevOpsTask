@@ -46,3 +46,15 @@ steps:
       echo "Pushing Docker image to ACR..."
       docker push $(acrLoginServer)/$(imageName):$(imageTag)
     displayName: "Push Docker image to ACR"
+
+  - script: |
+      echo "Checking Kubernetes connection..."
+      kubectl get nodes
+      kubectl get pods
+    displayName: "Check Kubernetes connection"
+
+  - script: |
+      echo "Deploying new image to Kubernetes..."
+      kubectl set image deployment/devopstask-flask devopstask-flask=$(acrLoginServer)/$(imageName):$(imageTag)
+      kubectl rollout status deployment/devopstask-flask
+    displayName: "Deploy to Kubernetes"
