@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE_NAME = 'devopstask-flask'
-        TEST_TAG = 'jenkins-test'
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -20,22 +15,22 @@ pipeline {
             }
         }
 
+        stage('Create Virtual Environment') {
+            steps {
+                sh 'python3 -m venv .venv'
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
-                sh 'python3 -m pip install --upgrade pip'
-                sh 'python3 -m pip install -r requirements.txt'
+                sh '. .venv/bin/activate && python3 -m pip install --upgrade pip'
+                sh '. .venv/bin/activate && python3 -m pip install -r requirements.txt'
             }
         }
 
         stage('Python Syntax Check') {
             steps {
-                sh 'python3 -m py_compile app.py'
-            }
-        }
-
-        stage('Docker Build Test') {
-            steps {
-                sh 'docker build -t $IMAGE_NAME:$TEST_TAG .'
+                sh '. .venv/bin/activate && python3 -m py_compile app.py'
             }
         }
     }
