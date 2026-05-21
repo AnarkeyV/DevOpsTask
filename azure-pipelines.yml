@@ -6,6 +6,10 @@ trigger:
 pool:
   name: Default
 
+variables:
+  imageName: 'devopstask-flask'
+  imageTag: '$(Build.BuildId)'
+
 steps:
   - checkout: self
 
@@ -24,3 +28,9 @@ steps:
       echo "Running Python syntax check..."
       python3 -m py_compile app.py
     displayName: "Run Python syntax check"
+
+  - script: |
+      echo "Building Docker image..."
+      docker build -t $(imageName):$(imageTag) .
+      docker images | grep $(imageName)
+    displayName: "Build Docker image"
