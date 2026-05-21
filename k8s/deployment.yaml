@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devopstask-flask
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: devopstask-flask
+  template:
+    metadata:
+      labels:
+        app: devopstask-flask
+    spec:
+      containers:
+        - name: devopstask-flask
+          image: devopstask-flask:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5002
